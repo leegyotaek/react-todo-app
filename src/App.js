@@ -1,8 +1,9 @@
 import './App.css';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Button, FormControl,Input, InputLabel} from '@material-ui/core'         
 import Todo from './components/Todo';
-import db from './firebase';
+import db from './firebase'; 
+import firebase from '@firebase/app-compat';
 
 function App() {
 
@@ -10,14 +11,14 @@ function App() {
   const [input, setInput] = useState('');
 
   // when the app loads, we need to listen to the database and fetch new todos as they get added/removed
-  // useEffect(()=>{
-  //   // this code here... fires when the app.js loads
-  //   db.collection('todos').onSnapshot(snapshot => {
-  //     setTodos(snapshot.docs.map(doc => doc.data().todo))
-  //   })
-  // }, [])
-  // useEffect(() => {
-  //   }, [input])
+  useEffect(()=>{
+    // this code here... fires when the app.js loads
+    db.collection('todos').orderBy('timestamp','desc').onSnapshot(snapshot => {
+      // console.log(snapshot.docs.map(doc => ({id: doc.id, todo: doc.data().todo})))
+      setTodos(snapshot.docs.map(doc => ({id: doc.id, todo: doc.data().todo})));
+      
+    })
+  })
 
 
   console.log('🔫)', input)
@@ -25,9 +26,14 @@ function App() {
   const addTodo = (event=> {
 
     event.preventDefault();
-    console.log('👻', 'Im working');
 
-    setTodos([...todos, input])
+    db.collection('todos').add({
+      todo: input,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    console.log('👻', 'Im working'); 
+
+    // setTodos([...todos, input])
     setInput(''); // clear up the input after clicking add todo button
 
   })
@@ -56,7 +62,7 @@ function App() {
       <ul>
         {todos.map(todo => (
            //<li>{todo}</li>
-           <Todo text={todo}/> 
+           <Todo id= {todo.id} text={todo.todo}/> 
         ))}
       </ul>
 
