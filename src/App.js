@@ -4,6 +4,7 @@ import {Button, FormControl,Input, InputLabel} from '@material-ui/core'
 import Todo from './components/Todo';
 import db from './firebase'; 
 import firebase from '@firebase/app-compat';
+import demo from './demo';
 
 function App() {
 
@@ -16,7 +17,6 @@ function App() {
     db.collection('todos').orderBy('timestamp','desc').onSnapshot(snapshot => {
       // console.log(snapshot.docs.map(doc => ({id: doc.id, todo: doc.data().todo})))
       setTodos(snapshot.docs.map(doc => ({id: doc.id, todo: doc.data().todo})));
-      
     })
   })
 
@@ -42,8 +42,7 @@ function App() {
     <div className="App">
       <h1>Hello World! 🚀🚀🚀</h1>
 
-      <form>
-
+      <form> 
       
       {/* <input value={input} onChange={event => setInput(event.target.value)}/> */}
 
@@ -51,7 +50,6 @@ function App() {
         <InputLabel>✅Write a Todo</InputLabel>
         <Input value={input} onChange={event => setInput(event.target.value)}></Input>
       </FormControl>
-
         <Button disabled={!input} type="submit" onClick={addTodo} variant="contained" color="primary">
       Add Todo
       </Button>
@@ -62,7 +60,7 @@ function App() {
       <ul>
         {todos.map(todo => (
            //<li>{todo}</li>
-           <Todo id= {todo.id} text={todo.todo}/> 
+           <Todo id= {todo.id} text={todo.todo}/>
         ))}
       </ul>
 
